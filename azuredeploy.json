@@ -42,7 +42,7 @@
     "osType": {
       "publisher": "Canonical",
       "offer": "UbuntuServer",
-      "sku": "14.04.3-LTS",
+      "sku": "16.04.0-LTS",
       "version": "latest"
     },
     "imageReference": "[variables('osType')]",
@@ -188,7 +188,7 @@
               ]
             },
             "protectedSettings": {
-              "commandToExecute": "[concat('./setup -v server')]"
+              "commandToExecute": "[concat('./setup -v agent')]"
             }
           }
         }
@@ -196,9 +196,9 @@
     }
   ],
   "outputs": {
-    "serverInternalIp": {
+    "serverDnsName": {
       "type": "string",
-      "value": "[reference(variables('nicName')).ipConfigurations[0].properties.privateIPAddress]"
+      "value": "[reference(variables('publicIPAddressName')).dnsSettings.fqdn]"
     }
   }
 }

@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourcePrefix": {
-            "value": "doliuw5"
+            "value": "doliuw8"
         },
         "adminPassword": {
-            "value": "password!@#"
+            "value": "password1#$%"
         }
     }
 }
