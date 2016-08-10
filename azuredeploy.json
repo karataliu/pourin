@@ -13,7 +13,7 @@
       "metadata": {
         "description": "Name for the monitor vm."
       },
-      "defaultValue": "Standard_DS2"
+      "defaultValue": "Standard_D2"
     },
     "adminUsername": {
       "type": "string",
@@ -188,7 +188,7 @@
               ]
             },
             "protectedSettings": {
-              "commandToExecute": "[concat('./setup -v agent')]"
+              "commandToExecute": "[concat('./setup -v')]"
             }
           }
         }

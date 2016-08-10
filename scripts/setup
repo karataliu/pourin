@@ -42,13 +42,13 @@ my %config      = (
     }
 }
 
-my $optType     = shift || "help";
+my $optType     = shift || "default";
 
 my %flow = (
-    agent   => sub {
+    default   => sub {
         my $s1 = [];
-        regSteps($s1, "Restart Zabbix Agent service.", sub {
-            runCmd('echo ok');
+        regSteps($s1, "Install nginx.", sub {
+            installPackageSuite("nginx");
         });
 
         return $s1;
@@ -131,11 +131,7 @@ sub runCmd
 
 
 my %suites = (
-    "zabbix-agent"      => ['zabbix-agent'],
-    "zabbix-server"     => ['zabbix-server-mysql', 'zabbix-frontend-php', 'php5-mysql', 'mysql-client'],
-    "mysql-server"      => ['mysql-server'],
-    "perl-jsonrpc"      => ['libjson-rpc-perl'],
-    "sendemail"         => ['sendEmail'],
+    "nginx"             => ['nginx'],
 );
 
 sub installPackageSuite
