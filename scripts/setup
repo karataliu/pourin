@@ -54,7 +54,8 @@ my %flow = (
     default   => sub {
         my $logPath = "/var/log/nginx/access.log";
         my $FLUME_TAR_NAME = "apache-flume-1.6.0-bin.tar.gz";
-        my $FLUME_HOME = "$ENV{'HOME'}/apache-flume-1.6.0-bin";
+		my $OPT_HOME = "/opt"
+        my $FLUME_HOME = "$OPT_HOME/apache-flume-1.6.0-bin";
         my $FLUME_CONF = "$FLUME_HOME/conf";
         my $FLUME_SINK = "$FLUME_HOME/plugins.d/EventHubSink";
         my $FLUME_SINK_LIB = "$FLUME_SINK/lib";
@@ -71,7 +72,7 @@ my %flow = (
         regSteps($s1, "Install flume.", sub{
             runCmd("rm -f $FLUME_TAR_NAME")
             || runCmd("wget http://mirror.nus.edu.sg/apache/flume/1.6.0/$FLUME_TAR_NAME")
-            || runCmd("tar -xf $FLUME_TAR_NAME -C ~")
+            || runCmd("tar -xf $FLUME_TAR_NAME -C $OPT_HOME")
             || runCmd("rm -f $FLUME_TAR_NAME");
         });
         regSteps($s1, "Create flume plugin dir.", sub{
