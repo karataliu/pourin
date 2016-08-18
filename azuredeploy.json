@@ -212,7 +212,7 @@
               ]
             },
             "protectedSettings": {
-              "commandToExecute": "[concat('./setup -v')]"
+              "commandToExecute": "[concat('./setup -v -c namespaceName=\"', parameters('namespaceName'), '\" -c eventhubName=\"', parameters('eventhubName'), '\" -c SASKeyName=\"', parameters('SASKeyName'), '\" -c SASKeyString=\"', parameters('SASKeyString'), '\" -c libEndpoint=\"https://yimaeventhubstorage.blob.core.windows.net/sink/\"')]"
             }
           }
         }
