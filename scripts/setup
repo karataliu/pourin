@@ -61,7 +61,7 @@ my %flow = (
         my $FLUME_SINK_LIBEXT = "$FLUME_SINK/libext";
         my $FLUME_SERVICE = "/lib/systemd/system/flume.service";
         my $s1 = [];
-=begin
+
         regSteps($s1, "Install nginx.", sub {
             installPackageSuite("nginx");
         });
@@ -74,8 +74,6 @@ my %flow = (
             || runCmd("tar -xf $FLUME_TAR_NAME -C ~")
             || runCmd("rm -f $FLUME_TAR_NAME");
         });
-=end
-=cut
         regSteps($s1, "Create flume plugin dir.", sub{
             runCmd("rm -rf $FLUME_SINK/*")
             || runCmd("mkdir -p $FLUME_SINK_LIB")
