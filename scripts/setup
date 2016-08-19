@@ -114,7 +114,7 @@ Requires=nginx.service
 
 [Service]
 Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ExecStart=/home/yima/apache-flume-1.6.0-bin/bin/flume-ng agent --conf /home/yima/apache-flume-1.6.0-bin/conf/ -f /home/yima/apache-flume-1.6.0-bin/conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent1
+ExecStart=$FLUME_HOME/bin/flume-ng agent --conf $FLUME_HOME/conf/ -f $FLUME_HOME/conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent1
 
 [Install]
 WantedBy=multi-user.target"
