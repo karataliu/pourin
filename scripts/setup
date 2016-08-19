@@ -207,7 +207,7 @@ sub runCmd
 
 my %suites = (
     "nginx"             => ['nginx'],
-    "jre"           => ['openjdk-8-jre'],
+    "jre"               => ['openjdk-8-jre'],
 );
 
 sub installPackageSuite
@@ -334,7 +334,6 @@ sub getServiceManager
 }
 
 __END__
-
 =head1 NAME
 
 setup - setup stuff
