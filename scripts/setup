@@ -7,7 +7,6 @@ use warnings;
 use Getopt::Long;
 use Pod::Usage;
 import util;
-import flume;
 
 our $VERSION    = 0.1.8;
 
