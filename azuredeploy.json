@@ -28,29 +28,18 @@
         "description": "Monitor VM password."
       }
     },
-    "namespaceName": {
-        "type": "string",
-        "metadata": {
-            "description": "Name of an existing Service Bus Namespace."
-        }
+    "eventHubSASKey":{
+      "type": "securestring",
+      "metadata": {
+        "description": "SASKey to connect to Event Hub."
+      }
     },
-    "eventhubName": {
-        "type": "string",
-        "metadata": {
-            "description": "Name of an existing Event Hub in the Namespace used to receive data."
-        }
-    },
-    "SASKeyName": {
-        "type": "string",
-        "metadata": {
-            "description": "Name of SAS Key used to connect to the Event Hub."
-        }
-    },
-    "SASKeyString":{
-        "type": "string",
-        "metadata": {
-            "description": "Connection string of the SAS Key."
-        }
+    "_libEndpoint": {
+      "type": "string",
+      "metadata": {
+        "description": "The base URL prefix where dependency libs are stored."
+      },
+      "defaultValue": "https://yimaeventhubstorage.blob.core.windows.net/sink"
     },
     "_artifactsLocation": {
       "type": "string",
@@ -212,7 +201,7 @@
               ]
             },
             "protectedSettings": {
-              "commandToExecute": "[concat('./setup -v -c namespaceName=\"', parameters('namespaceName'), '\" -c eventhubName=\"', parameters('eventhubName'), '\" -c SASKeyName=\"', parameters('SASKeyName'), '\" -c SASKeyString=\"', parameters('SASKeyString'), '\" -c libEndpoint=\"https://yimaeventhubstorage.blob.core.windows.net/sink/\"')]"
+              "commandToExecute": "[concat('./setup -v -c namespaceName=\"', parameters('namespaceName'), '\" -c eventhubName=\"', parameters('eventhubName'), '\" -c SASKeyName=\"', parameters('SASKeyName'), '\" -c SASKeyString=\"', parameters('SASKeyString'), '\" -c libEndpoint=\"', parameters('_libEndpoint'), '/\"')]"
             }
           }
         }
