@@ -28,6 +28,30 @@
         "description": "Monitor VM password."
       }
     },
+    "namespaceName": {
+        "type": "string",
+        "metadata": {
+            "description": "Name of an existing Service Bus Namespace."
+        }
+    },
+    "eventhubName": {
+        "type": "string",
+        "metadata": {
+            "description": "Name of an existing Event Hub in the Namespace used to receive data."
+        }
+    },
+    "SASKeyName": {
+        "type": "string",
+        "metadata": {
+            "description": "Name of SAS Key used to connect to the Event Hub."
+        }
+    },
+    "SASKeyString":{
+        "type": "string",
+        "metadata": {
+            "description": "Connection string of the SAS Key."
+        }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -188,7 +212,7 @@
               ]
             },
             "protectedSettings": {
-              "commandToExecute": "[concat('./setup -v')]"
+              "commandToExecute": "[concat('./setup -v -c namespaceName=\"', parameters('namespaceName'), '\" -c eventhubName=\"', parameters('eventhubName'), '\" -c SASKeyName=\"', parameters('SASKeyName'), '\" -c SASKeyString=\"', parameters('SASKeyString'), '\" -c libEndpoint=\"https://yimaeventhubstorage.blob.core.windows.net/sink/\"')]"
             }
           }
         }

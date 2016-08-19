@@ -11,6 +11,11 @@ import util;
 our $VERSION    = 0.1.8;
 
 my %config      = (
+    namespaceName => "",
+    eventhubName => "",
+    SASKeyName => "",
+    SASKeyString => "",
+    libEndpoint => ""
 );
 
 {   # Parse options.
@@ -46,9 +51,78 @@ my $optType     = shift || "default";
 
 my %flow = (
     default   => sub {
+        my $logPath = "/var/log/nginx/access.log";
+        my $FLUME_TAR_NAME = "apache-flume-1.6.0-bin.tar.gz";
+        my $OPT_HOME = "/opt";
+        my $FLUME_HOME = "$OPT_HOME/apache-flume-1.6.0-bin";
+        my $FLUME_CONF = "$FLUME_HOME/conf";
+        my $FLUME_SINK = "$FLUME_HOME/plugins.d/EventHubSink";
+        my $FLUME_SINK_LIB = "$FLUME_SINK/lib";
+        my $FLUME_SINK_LIBEXT = "$FLUME_SINK/libext";
+        my $FLUME_SERVICE = "/lib/systemd/system/flume.service";
         my $s1 = [];
+
         regSteps($s1, "Install nginx.", sub {
             installPackageSuite("nginx");
+        });
+        regSteps($s1, "Install jre.", sub{
+            installPackageSuite("jre");
+        });
+        regSteps($s1, "Install flume.", sub{
+            runCmd("rm -f $FLUME_TAR_NAME")
+            || runCmd("wget http://mirror.nus.edu.sg/apache/flume/1.6.0/$FLUME_TAR_NAME")
+            || runCmd("tar -xf $FLUME_TAR_NAME -C $OPT_HOME")
+            || runCmd("rm -f $FLUME_TAR_NAME");
+        });
+        regSteps($s1, "Create flume plugin dir.", sub{
+            runCmd("rm -rf $FLUME_SINK/*")
+            || runCmd("mkdir -p $FLUME_SINK_LIB")
+            || runCmd("mkdir -p $FLUME_SINK_LIBEXT");
+        });
+        regSteps($s1, "Download libs.", sub{
+            runCmd("wget $config{'libEndpoint'}EventHubSink.jar -P $FLUME_SINK_LIB")
+            || runCmd("wget $config{'libEndpoint'}azure-eventhubs-0.7.2.jar -P $FLUME_SINK_LIBEXT")
+            || runCmd("wget $config{'libEndpoint'}bcpkix-jdk15on-1.47.jar -P $FLUME_SINK_LIBEXT")
+            || runCmd("wget $config{'libEndpoint'}bcprov-jdk15on-1.47.jar -P $FLUME_SINK_LIBEXT")
+            || runCmd("wget $config{'libEndpoint'}proton-j-0.13.0.jar -P $FLUME_SINK_LIBEXT");
+        });
+        regSteps($s1, "Write config file.", sub{
+            my $content = << "EOM";
+agent1.channels.ch1.type = memory
+agent1.sources.source1.channels = ch1
+agent1.sources.source1.type = exec
+agent1.sources.source1.command = tail -F $logPath
+agent1.sinks.sink1.channel = ch1
+agent1.sinks.sink1.type = EventHubSink
+agent1.sinks.sink1.namespaceName = $config{'namespaceName'}
+agent1.sinks.sink1.eventHubName = $config{'eventhubName'}
+agent1.sinks.sink1.sasKeyName = $config{'SASKeyName'}
+agent1.sinks.sink1.sasKey = $config{'SASKeyString'}
+agent1.channels = ch1
+agent1.sources = source1
+agent1.sinks = sink1
+EOM
+            installFile("$FLUME_CONF/flume.conf", $content);
+        });
+        regSteps($s1, "Register flume service.", sub{
+            my $content = << "EOM";
+[Unit]
+Description=Flume NG
+After=nginx.service
+Requires=nginx.service
+
+[Service]
+Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ExecStart=$FLUME_HOME/bin/flume-ng agent --conf $FLUME_HOME/conf/ -f $FLUME_HOME/conf/flume.conf -Dflume.root.logger=DEBUG,console -n agent1
+
+[Install]
+WantedBy=multi-user.target"
+EOM
+            installFile($FLUME_SERVICE, $content);
+        });
+        regSteps($s1, "Start flume service.", sub{
+            runCmd("systemctl enable $FLUME_SERVICE")
+            || runCmd("systemctl start flume.service");
         });
 
         return $s1;
@@ -132,6 +206,7 @@ sub runCmd
 
 my %suites = (
     "nginx"             => ['nginx'],
+    "jre"               => ['openjdk-8-jre'],
 );
 
 sub installPackageSuite
@@ -232,7 +307,7 @@ sub enableService
     return 1 unless $serviceManager;
     my $cmd = sprintf $$serviceManager{enable}, $serviceName;
     my $ret = runCmd($cmd);
-    
+
     return $ret;
 }
 
