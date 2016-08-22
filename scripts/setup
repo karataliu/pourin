@@ -68,7 +68,7 @@ my %flow = (
         });
         regSteps($s1, "Install flume.", sub{
             runCmd("rm -f $FLUME_TAR_NAME")
-            || runCmd("wget http://mirror.nus.edu.sg/apache/flume/1.6.0/$FLUME_TAR_NAME")
+            || runCmd("wget $config{'libEndpoint'}$FLUME_TAR_NAME")
             || runCmd("tar -xf $FLUME_TAR_NAME -C $OPT_HOME")
             || runCmd("rm -f $FLUME_TAR_NAME");
         });
