@@ -92,23 +92,30 @@ my %flow = (
             my $eventHubName = $3;
             my $content = << "EOM";
 agent1.channels.ch1.type = memory
+agent1.channels.ch2.type = memory
 agent1.sources.source1.channels = ch1
 agent1.sources.source1.type = exec
-agent1.sources.source1.messageType = access
 agent1.sources.source1.command = tail -F -n 0 $accessLogPath
-agent1.sources.source2.channels = ch1
+agent1.sources.source2.channels = ch2
 agent1.sources.source2.type = exec
-agent1.sources.source2.messageType = error
 agent1.sources.source2.command = tail -F -n 0 $errorLogPath
 agent1.sinks.sink1.channel = ch1
 agent1.sinks.sink1.type = EventHubSink
+agent1.sinks.sink1.messageType = access
 agent1.sinks.sink1.namespaceName = $namespaceName
 agent1.sinks.sink1.eventHubName = $eventHubName
 agent1.sinks.sink1.sasKeyName = $SASKeyName
 agent1.sinks.sink1.sasKey = $SASKey
-agent1.channels = ch1
+agent1.sinks.sink2.channel = ch2
+agent1.sinks.sink2.type = EventHubSink
+agent1.sinks.sink2.messageType = error
+agent1.sinks.sink2.namespaceName = $namespaceName
+agent1.sinks.sink2.eventHubName = $eventHubName
+agent1.sinks.sink2.sasKeyName = $SASKeyName
+agent1.sinks.sink2.sasKey = $SASKey
+agent1.channels = ch1 ch2
 agent1.sources = source1 source2
-agent1.sinks = sink1
+agent1.sinks = sink1 sink2
 EOM
             installFile("$FLUME_CONF/flume.conf", $content);
         });
