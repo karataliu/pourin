@@ -48,7 +48,8 @@ my $optType     = shift || "default";
 
 my %flow = (
     default   => sub {
-        my $logPath = "/var/log/nginx/access.log";
+        my $accessLogPath = "/var/log/nginx/access.log";
+        my $errorLogPath = "/var/log/nginx/error.log";
         my $FLUME_TAR_NAME = "apache-flume-1.6.0-bin.tar.gz";
         my $OPT_HOME = "/opt";
         my $FLUME_HOME = "$OPT_HOME/apache-flume-1.6.0-bin";
@@ -93,7 +94,12 @@ my %flow = (
 agent1.channels.ch1.type = memory
 agent1.sources.source1.channels = ch1
 agent1.sources.source1.type = exec
-agent1.sources.source1.command = tail -F $logPath
+agent1.sources.source1.messageType = access
+agent1.sources.source1.command = tail -F -n 0 $accessLogPath
+agent1.sources.source2.channels = ch1
+agent1.sources.source2.type = exec
+agent1.sources.source2.messageType = error
+agent1.sources.source2.command = tail -F -n 0 $errorLogPath
 agent1.sinks.sink1.channel = ch1
 agent1.sinks.sink1.type = EventHubSink
 agent1.sinks.sink1.namespaceName = $namespaceName
@@ -101,7 +107,7 @@ agent1.sinks.sink1.eventHubName = $eventHubName
 agent1.sinks.sink1.sasKeyName = $SASKeyName
 agent1.sinks.sink1.sasKey = $SASKey
 agent1.channels = ch1
-agent1.sources = source1
+agent1.sources = source1 source2
 agent1.sinks = sink1
 EOM
             installFile("$FLUME_CONF/flume.conf", $content);
