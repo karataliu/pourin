@@ -201,7 +201,7 @@
               ]
             },
             "protectedSettings": {
-              "commandToExecute": "[concat('./setup -v -c namespaceName=\"', parameters('namespaceName'), '\" -c eventhubName=\"', parameters('eventhubName'), '\" -c SASKeyName=\"', parameters('SASKeyName'), '\" -c SASKeyString=\"', parameters('SASKeyString'), '\" -c libEndpoint=\"', parameters('_libEndpoint'), '/\"')]"
+              "commandToExecute": "[concat('./setup -v -c SASKey=\"', parameters('eventHubSASKey'), '\" -c libEndpoint=\"', parameters('_libEndpoint'), '/\"')]"
             }
           }
         }

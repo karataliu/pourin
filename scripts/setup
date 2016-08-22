@@ -11,10 +11,7 @@ import util;
 our $VERSION    = 0.1.8;
 
 my %config      = (
-    namespaceName => "",
-    eventhubName => "",
-    SASKeyName => "",
-    SASKeyString => "",
+    SASKey => "",
     libEndpoint => ""
 );
 
@@ -61,7 +58,7 @@ my %flow = (
         my $FLUME_SINK_LIBEXT = "$FLUME_SINK/libext";
         my $FLUME_SERVICE = "/lib/systemd/system/flume.service";
         my $s1 = [];
-
+=begin
         regSteps($s1, "Install nginx.", sub {
             installPackageSuite("nginx");
         });
@@ -86,7 +83,14 @@ my %flow = (
             || runCmd("wget $config{'libEndpoint'}bcprov-jdk15on-1.47.jar -P $FLUME_SINK_LIBEXT")
             || runCmd("wget $config{'libEndpoint'}proton-j-0.13.0.jar -P $FLUME_SINK_LIBEXT");
         });
+=end
+=cut
         regSteps($s1, "Write config file.", sub{
+            my $SASKey = $config{'SASKey'};
+            $SASKey =~ /Endpoint=sb:\/\/(.*).servicebus.windows.net\/;SharedAccessKeyName=(.*);SharedAccessKey=.*=;EntityPath=(.*)/;
+            my $namespaceName = $1;
+            my $SASKeyName = $2;
+            my $eventHubName = $3;
             my $content = << "EOM";
 agent1.channels.ch1.type = memory
 agent1.sources.source1.channels = ch1
@@ -94,10 +98,10 @@ agent1.sources.source1.type = exec
 agent1.sources.source1.command = tail -F $logPath
 agent1.sinks.sink1.channel = ch1
 agent1.sinks.sink1.type = EventHubSink
-agent1.sinks.sink1.namespaceName = $config{'namespaceName'}
-agent1.sinks.sink1.eventHubName = $config{'eventhubName'}
-agent1.sinks.sink1.sasKeyName = $config{'SASKeyName'}
-agent1.sinks.sink1.sasKey = $config{'SASKeyString'}
+agent1.sinks.sink1.namespaceName = $namespaceName
+agent1.sinks.sink1.eventHubName = $eventHubName
+agent1.sinks.sink1.sasKeyName = $SASKeyName
+agent1.sinks.sink1.sasKey = $SASKey
 agent1.channels = ch1
 agent1.sources = source1
 agent1.sinks = sink1
