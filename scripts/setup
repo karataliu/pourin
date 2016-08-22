@@ -58,7 +58,7 @@ my %flow = (
         my $FLUME_SINK_LIBEXT = "$FLUME_SINK/libext";
         my $FLUME_SERVICE = "/lib/systemd/system/flume.service";
         my $s1 = [];
-=begin
+
         regSteps($s1, "Install nginx.", sub {
             installPackageSuite("nginx");
         });
@@ -83,8 +83,6 @@ my %flow = (
             || runCmd("wget $config{'libEndpoint'}bcprov-jdk15on-1.47.jar -P $FLUME_SINK_LIBEXT")
             || runCmd("wget $config{'libEndpoint'}proton-j-0.13.0.jar -P $FLUME_SINK_LIBEXT");
         });
-=end
-=cut
         regSteps($s1, "Write config file.", sub{
             my $SASKey = $config{'SASKey'};
             $SASKey =~ /Endpoint=sb:\/\/(.*).servicebus.windows.net\/;SharedAccessKeyName=(.*);SharedAccessKey=.*=;EntityPath=(.*)/;
