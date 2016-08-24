@@ -39,7 +39,7 @@
       "metadata": {
         "description": "The base URL prefix where dependency libs are stored."
       },
-      "defaultValue": "https://yimajar.blob.core.chinacloudapi.cn/sink"
+      "defaultValue": "https://msmirrors.blob.core.chinacloudapi.cn/flume"
     },
     "_artifactsLocation": {
       "type": "string",
