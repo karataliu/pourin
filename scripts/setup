@@ -11,7 +11,7 @@ import util;
 our $VERSION    = 0.1.8;
 
 my %config      = (
-    SASKey => "",
+    connStr => "",
     libEndpoint => ""
 );
 
@@ -84,11 +84,6 @@ my %flow = (
             || runCmd("wget $config{'libEndpoint'}/proton-j-0.13.0.jar -P $FLUME_SINK_LIBEXT");
         });
         regSteps($s1, "Write config file.", sub{
-            my $SASKey = $config{'SASKey'};
-            $SASKey =~ /Endpoint=sb:\/\/(.*).servicebus.*\/;SharedAccessKeyName=(.*);SharedAccessKey=.*;EntityPath=(.*)/;
-            my $namespaceName = $1;
-            my $SASKeyName = $2;
-            my $eventHubName = $3;
             my $content = << "EOM";
 agent1.channels.ch1.type = memory
 agent1.sources.source1.channels = ch1
@@ -97,10 +92,7 @@ agent1.sources.source1.command = tail -F -n 0 $accessLogPath
 agent1.sinks.sink1.channel = ch1
 agent1.sinks.sink1.type = EventHubSink
 agent1.sinks.sink1.messageType = access
-agent1.sinks.sink1.namespaceName = $namespaceName
-agent1.sinks.sink1.eventHubName = $eventHubName
-agent1.sinks.sink1.sasKeyName = $SASKeyName
-agent1.sinks.sink1.sasKey = $SASKey
+agent1.sinks.sink1.connectionString = $config{'connStr'}
 agent1.channels = ch1
 agent1.sources = source1
 agent1.sinks = sink1
